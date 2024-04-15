@@ -53,7 +53,7 @@ int main(int argc, char **argv){
 
     double x0 = X_ref;
     double y0 = Y_ref;
-    double degrees0 = 0;
+    double angle0 = 0;
 
     while (ros::ok()) {
         // Create a new odometry message
@@ -92,11 +92,12 @@ int main(int argc, char **argv){
         //Angle calculation
         double Y_angle = Y_final - y0;
         double X_angle = X_final - x0;
-        double angle = atan(Y_angle/X_angle);
+        double angle = atan2(Y_angle,X_angle);
         double degrees = angle * 180 / M_PI;
 
-        if (isnan(degrees)){
-            degrees = degrees0;
+        
+        if (angle == 0.0){
+            angle = angle0;
         }
 
 
@@ -105,9 +106,10 @@ int main(int argc, char **argv){
         new_msg.pose.pose.position.y = Y_final;
         new_msg.pose.pose.position.z = Z_final;
 
-        new_msg.pose.pose.orientation.x = x0;
-        new_msg.pose.pose.orientation.y = y0;
-        new_msg.pose.pose.orientation.z = degrees;
+        new_msg.pose.pose.orientation.x = 0;
+        new_msg.pose.pose.orientation.y = 0;
+        new_msg.pose.pose.orientation.z = sin(angle/2);
+        new_msg.pose.pose.orientation.w = cos(angle/2);
         
 
         // Publish the odometry message
@@ -119,7 +121,7 @@ int main(int argc, char **argv){
 
         y0 = Y_final;
         x0 = X_final;
-        degrees0 = degrees;
+        angle0 = angle;
     }
 
     return 0;
