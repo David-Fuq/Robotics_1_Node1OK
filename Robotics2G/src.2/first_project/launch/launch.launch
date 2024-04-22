@@ -1,0 +1,37 @@
+
+<launch>
+
+<node name="rviz" pkg="rviz" type="rviz" respawn="false"/>
+<node pkg="first_project" type="gps_to_odom" name="gps_to_odom"/>
+<param name="/lat0" value="45.477669461666665"/>
+<param name="/lon0" value="9.22674018"/>
+<param name="/alt0" value="169.039"/>
+
+
+<node pkg="first_project" type="lidar_remap" name="lidar_remap"/>
+
+
+
+	
+<group>
+	<node pkg="first_project" type="odom_to_tf" name="odom_to_tf_1" output="screen">
+	<remap from="input_odom" to="gps_odom"/>
+	<param name="child" value="gps_odom"/>
+	<param name="root" value="world"/>		
+
+</node>
+</group>
+
+
+<group>
+	<node pkg="first_project" type="odom_to_tf" name="odom_to_tf_2" output="screen">
+	<param name="child" value="wheel_odom"/>
+	<param name="root" value="world"/>
+	<remap from="input_odom" to="odom"/>
+
+</node>
+</group>
+
+
+</launch>
+
